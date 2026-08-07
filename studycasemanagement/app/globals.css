@@ -121,10 +121,13 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
+  /* The app is always-dark — hardcode the near-black page background so a light
+     theme or overscroll can never reveal white at the bottom of the page. */
   html {
-    @apply font-sans;
+    @apply font-sans bg-[oklch(0.10_0_0)];
+  }
+  body {
+    @apply bg-[oklch(0.10_0_0)] text-white;
+    color-scheme: dark;
   }
 }

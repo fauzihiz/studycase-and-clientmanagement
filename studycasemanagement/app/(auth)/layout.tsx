@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[oklch(0.10_0_0)] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[oklch(0.10_0_0)] grid place-items-center p-4">
       {/* Subtle grid background */}
       <div
         className="fixed inset-0 opacity-[0.03]"

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useTransition } from 'react'
+import { useState, useRef, useEffect, useTransition, useSyncExternalStore } from 'react'
 import { usePathname } from 'next/navigation'
 import { type User } from '@supabase/supabase-js'
 import { signOut } from '@/app/actions/auth'
@@ -13,13 +13,6 @@ import {
   Sun,
   Moon,
   ChevronRight,
-  LayoutDashboard,
-  Users,
-  FolderOpen,
-  BarChart2,
-  ImageIcon,
-  FileText,
-  Settings,
 } from 'lucide-react'
 
 // Map path segments to human-readable labels for the breadcrumb
@@ -36,25 +29,46 @@ const routeLabels: Record<string, string> = {
 
 // ─────────────────────────────────────────────────────────
 // Dark mode toggle hook (persists in localStorage)
+//
+// Hydration-safe via useSyncExternalStore:
+//  - getServerSnapshot() always returns true (dark), so the
+//    server HTML and the initial client render match exactly
+//    (no hydration mismatch).
+//  - getSnapshot() reads the user's saved preference from
+//    localStorage and re-renders with it after hydration.
+//    Without a saved preference the app stays dark (always-dark design).
+//  - No setState in effects → satisfies the React compiler lint rule.
 // ─────────────────────────────────────────────────────────
-function useDarkMode() {
-  const [dark, setDark] = useState(true) // default: dark
+function subscribe(callback: () => void) {
+  window.addEventListener('storage', callback)
+  return () => window.removeEventListener('storage', callback)
+}
 
+function getDarkSnapshot(): boolean {
+  const stored = localStorage.getItem('theme')
+  // The app is always-dark by design — default to dark when the user has no
+  // saved preference so the `dark` class is never removed after hydration.
+  return stored ? stored === 'dark' : true
+}
+
+function getServerSnapshot(): boolean {
+  return true // SSR + first hydration render → dark, matches server HTML
+}
+
+function useDarkMode() {
+  const dark = useSyncExternalStore(subscribe, getDarkSnapshot, getServerSnapshot)
+
+  // Apply the theme class whenever the theme changes.
   useEffect(() => {
-    const stored = localStorage.getItem('theme')
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const isDark = stored ? stored === 'dark' : prefersDark
-    setDark(isDark)
-    document.documentElement.classList.toggle('dark', isDark)
-  }, [])
+    document.documentElement.classList.toggle('dark', dark)
+  }, [dark])
 
   function toggle() {
-    setDark((prev) => {
-      const next = !prev
-      document.documentElement.classList.toggle('dark', next)
-      localStorage.setItem('theme', next ? 'dark' : 'light')
-      return next
-    })
+    const next = !dark
+    localStorage.setItem('theme', next ? 'dark' : 'light')
+    // The storage event doesn't fire on the same tab that wrote it,
+    // so dispatch manually to notify useSyncExternalStore subscribers.
+    window.dispatchEvent(new Event('storage'))
   }
 
   return { dark, toggle }
