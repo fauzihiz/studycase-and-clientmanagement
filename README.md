@@ -30,15 +30,15 @@ Built as a Progressive Web App (PWA) for seamless mobile updates on the field.
 ## 🚀 Development Roadmap & Progress Tracker
 
 ### Phase 1: Project Setup & Architecture
-- [ ] Initialize Next.js project with Tailwind CSS & TypeScript
-- [ ] Install and configure `shadcn/ui`
-- [ ] Setup Supabase project and define PostgreSQL Schema (`schema.sql`)
-- [ ] Configure Row Level Security (RLS) policies for multi-tenant data isolation
+- [x] Initialize Next.js project with Tailwind CSS & TypeScript
+- [x] Install and configure `shadcn/ui`
+- [x] Setup Supabase project and define PostgreSQL Schema (`schema.sql`)
+- [x] Configure Row Level Security (RLS) policies for multi-tenant data isolation
 
 ### Phase 2: Authentication & Core Dashboard
-- [ ] Implement Supabase Auth (Email / Magic Link / OAuth)
-- [ ] Build Dashboard Layout (Responsive Navbar, Sidebar, and Dark Mode)
-- [ ] Create CRUD operations for **Clients**
+- [x] Implement Supabase Auth (Email / Magic Link / OAuth)
+- [x] Build Dashboard Layout (Responsive Navbar, Sidebar, and Dark Mode)
+- [x] Create CRUD operations for **Clients**
 - [ ] Create CRUD operations for **Projects & Briefs**
 
 ### Phase 3: Media & Metrics Logging
